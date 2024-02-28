@@ -1,0 +1,45 @@
+name: Run Jobs Selectively
+
+on:
+  workflow_dispatch:
+    branches: [ "main" ]
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+
+jobs:
+
+  smoke:
+    name: Smoke job
+    runs-on: [ubuntu-latest]
+    
+    steps:
+     - run: echo "We ran the Smoke job"
+
+  integration:
+    name: Integration job
+    runs-on: [ubuntu-latest]
+    needs: [smoke]
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.inputs.action == 'integration' }} # Run if manually triggered, triggered by push, or manually triggered for door
+    
+    steps:
+     - run: echo "We ran the Integration job"
+
+  acceptance:
+    name: Acceptance job
+    runs-on: [ubuntu-latest]
+    needs: [integration]
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.inputs.action == 'acceptance' }} # Run if manually triggered or manually triggered for window
+    
+    steps:
+     - run: echo "We ran the Acceptance job"
+  
+  prod:
+    name: Prod job
+    runs-on: [ubuntu-latest]
+    needs: [acceptance]
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.inputs.action == 'prod' }} # Run if manually triggered or manually triggered for window
+    
+    steps:
+     - run: echo "We ran the Prod job"
