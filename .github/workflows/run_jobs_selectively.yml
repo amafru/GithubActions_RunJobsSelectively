@@ -31,7 +31,7 @@ jobs:
     name: Acceptance job
     runs-on: [ubuntu-latest]
     needs: [smoke, integration]
-    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'acceptance' || github.event.inputs.jobs_to_run == 'run_all' || needs('smoke') || needs('integration')) }} 
+    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'acceptance' || github.event.inputs.jobs_to_run == 'run_all' || success() && github.job == 'smoke' || success() && github.job == 'integration') }} 
     
     steps:
      - run: echo "We ran the Acceptance job"
@@ -40,7 +40,7 @@ jobs:
     name: Prod job
     runs-on: [ubuntu-latest]
     needs: [smoke, acceptance]
-    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'prod' || github.event.inputs.jobs_to_run == 'run_all' || needs('smoke') || needs('integration')) }} 
+    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'prod' || github.event.inputs.jobs_to_run == 'run_all' || success() && github.job == 'smoke' || success() && github.job == 'acceptance' }} 
     
     steps:
      - run: echo "We ran the Prod job"
