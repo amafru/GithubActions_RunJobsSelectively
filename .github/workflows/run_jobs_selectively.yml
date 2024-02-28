@@ -30,17 +30,18 @@ jobs:
   acceptance:
     name: Acceptance job
     runs-on: [ubuntu-latest]
+    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'acceptance' || github.event.inputs.jobs_to_run == 'run_all') }}
     needs: [integration]
-    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'acceptance' || github.event.inputs.jobs_to_run == 'run_all') }} 
-    
+     
     steps:
      - run: echo "We ran the Acceptance job"
   
   prod:
     name: Prod job
     runs-on: [ubuntu-latest]
+    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'prod' || github.event.inputs.jobs_to_run == 'run_all') }}
     needs: [acceptance]
-    if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.jobs_to_run == 'prod' || github.event.inputs.jobs_to_run == 'run_all') }} 
+     
     
     steps:
      - run: echo "We ran the Prod job"
